@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enviar Ubicación</title>
+    <style>
+        body {
+            text-align: center;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .status {
+            margin: 20px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div id="status"></div>
+    <script>
+        const statusDiv = document.getElementById('status');
+        
+        function showStatus(message, isError = false) {
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${isError ? 'error' : 'success'}`;
+        }
+
+        if (navigator.geolocation) {
+            showStatus("Obteniendo ubicación...");
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var latitude = position.coords.latitude;
+                var longitude = position.coords.longitude;
+                var message = "Mi ubicación actual: https://maps.google.com/?q=" + latitude + "," + longitude;
+                var whatsappURL = "https://api.whatsapp.com/send?phone=56977799965&text=" + encodeURIComponent(message);
+                showStatus("¡Ubicación obtenida! Abriendo WhatsApp...");
+                setTimeout(() => {
+                    window.location.href = whatsappURL;
+                }, 1000);
+            }, function(error) {
+                showStatus("Error al obtener la ubicación. Por favor, permite el acceso a la ubicación.", true);
+            });
+        } else {
+            showStatus("Tu navegador no soporta geolocalización", true);
+        }
+    </script>
+</body>
+</html>
